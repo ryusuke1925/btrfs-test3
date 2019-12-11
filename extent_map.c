@@ -232,7 +232,7 @@ static void try_merge_map(struct extent_map_tree *tree, struct extent_map *em)
 {
 	struct extent_map *merge = NULL;
 	struct rb_node *rb;
-	int cnt_prev,cnt_next;
+	//int cnt_prev,cnt_next;
 
 	if (em->start != 0) {
 		rb = rb_prev(&em->rb_node);
@@ -249,7 +249,7 @@ static void try_merge_map(struct extent_map_tree *tree, struct extent_map *em)
 
 			WARN_ON(cnt_prev>2);*/
 
-			while( read_refcount(&(em->refs)) > 2) {
+			while( refcount_read(&(em->refs)) > 2) {
 
 			}
 
@@ -282,7 +282,7 @@ static void try_merge_map(struct extent_map_tree *tree, struct extent_map *em)
 		
 		WARN_ON(cnt_next>2);*/
 
-		while( read_refcount(&(em->refs)) > 2) {
+		while( refcount_read(&(em->refs)) > 2) {
 	
 		}	
 
