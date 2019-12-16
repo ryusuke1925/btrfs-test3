@@ -8,6 +8,7 @@
 #include "extent_map.h"
 #include "compression.h"
 
+#include <linux/wait.h>
 
 static struct kmem_cache *extent_map_cache;
 
@@ -232,7 +233,6 @@ static void try_merge_map(struct extent_map_tree *tree, struct extent_map *em)
 {
 	struct extent_map *merge = NULL;
 	struct rb_node *rb;
-	//int cnt_prev,cnt_next;
 
 	if (em->start != 0) {
 		rb = rb_prev(&em->rb_node);
@@ -240,19 +240,6 @@ static void try_merge_map(struct extent_map_tree *tree, struct extent_map *em)
 			merge = rb_entry(rb, struct extent_map, rb_node);
 		if (rb && mergable_maps(merge, em)) {
 	
-			//BUG_ON(extent_map_in_tree(em));
-			
-			/*cnt_prev=refcount_read(&(em->refs));
-
-			if(cnt_prev>2)
-				printk("try_merge_map:ref_count(prev)=%d",cnt_prev);
-
-			WARN_ON(cnt_prev>2);*/
-
-			while( refcount_read(&(em->refs)) > 2) {
-
-			}
-
 			em->start = merge->start;
 			em->orig_start = merge->orig_start;
 			em->len += merge->len;
@@ -272,19 +259,6 @@ static void try_merge_map(struct extent_map_tree *tree, struct extent_map *em)
 	if (rb)
 		merge = rb_entry(rb, struct extent_map, rb_node);
 	if (rb && mergable_maps(em, merge)) {
-		
-		//BUG_ON(extent_map_in_tree(em));
-
-		/*cnt_next=refcount_read(&(em->refs));
-		
-		if(cnt_next>2)
-			printk("try_merge_map:ref_count(next)=%d",cnt_next);
-		
-		WARN_ON(cnt_next>2);*/
-
-		while( refcount_read(&(em->refs)) > 2) {
-	
-		}	
 
 		em->len += merge->len;
 		em->block_len += merge->block_len;
