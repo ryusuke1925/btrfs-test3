@@ -239,6 +239,8 @@ static void try_merge_map(struct extent_map_tree *tree, struct extent_map *em)
 		if (rb)
 			merge = rb_entry(rb, struct extent_map, rb_node);
 		if (rb && mergable_maps(merge, em)) {
+
+			while(refcount_read(&(em->refs))>2){}
 	
 			em->start = merge->start;
 			em->orig_start = merge->orig_start;
@@ -259,6 +261,8 @@ static void try_merge_map(struct extent_map_tree *tree, struct extent_map *em)
 	if (rb)
 		merge = rb_entry(rb, struct extent_map, rb_node);
 	if (rb && mergable_maps(em, merge)) {
+
+		while(refcount_read(&(em->refs))>2){}
 
 		em->len += merge->len;
 		em->block_len += merge->block_len;
